@@ -1,0 +1,881 @@
+MPASM  5.37                          MAIN.ASM   4-12-2017  21:58:45         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001         LIST            p=16f876a
+2007   3F3A           00002         __CONFIG        0x3F3A
+                      00003         
+                      00004 ;; переменные
+  00000083            00005 STATUS          EQU             83h
+  0000008B            00006 INTCON          EQU             8Bh
+  00000085            00007 TRISA           EQU             85h
+  00000086            00008 TRISB           EQU             86h
+  00000087            00009 TRISC           EQU             87h
+  00000005            00010 PORTA           EQU             05h
+  00000006            00011 PORTB           EQU             06h
+  00000007            00012 PORTC           EQU             07h
+  00000002            00013 PCL                     EQU             02h
+  0000001F            00014 ADCON0          EQU             1Fh
+  0000009F            00015 ADCON1          EQU             9Fh
+                      00016 ;; DS1302 константы
+  00000002            00017 RST                     EQU             .2
+  00000000            00018 SCLK            EQU             .0
+  00000001            00019 IO                      EQU             .1
+  00000082            00020 DS_W_MINUTES    EQU             82h
+  00000083            00021 DS_R_MINUTES    EQU             83h
+  00000084            00022 DS_W_HOUR       EQU             84h
+  00000085            00023 DS_R_HOUR       EQU             85h
+  00000086            00024 DS_W_DAY        EQU             86h
+  00000087            00025 DS_R_DAY        EQU             87h
+  00000088            00026 DS_W_MONTH      EQU             88h
+  00000089            00027 DS_R_MONTH      EQU             89h
+  00000080            00028 DS_BEGIN_W      EQU             B'10000000'
+                      00029 ;;
+  00000002            00030 B_MODE          EQU             .2
+  00000003            00031 B_SELECT        EQU             .3
+                      00032 ;;      Количество показов, чтобы избежать дребезга
+  0000000A            00033 RATTLING_COUNT_SHOWING  EQU             .10                                             ;;;!!! ПРОТЕСТИР
+                            ОВАТЬ !!!
+  00000009            00034 COUNT_TAPS_MODE_CONST   EQU             .9
+  00000007            00035 COUNT_TAPS_MODE_CONST1  EQU             .7
+Warning[205]: Found directive in column 1. (CBLOCK)
+                      00036 CBLOCK 0x20
+  00000020            00037 IND1            ;; 0x20
+  00000021            00038 IND2            ;; 0x21
+  00000022            00039 IND3            ;; 0x22
+  00000023            00040 IND4            ;; x023
+  00000024            00041 IND_TEMP
+  00000025            00042 IBLINKING       ;;      =00001110
+  00000026            00043 IDOBLINK                ;; 0/1  
+                      00044 ;;
+  00000027            00045 COUNT_TAPS_MODE
+                      00046 ;;ВРЕМЯ СЕЙЧАС
+  00000028            00047 NOW_MINUTE
+  00000029            00048 NOW_MINUTE10
+  0000002A            00049 NOW_HOUR
+  0000002B            00050 NOW_HOUR10
+  0000002C            00051 NOW_DAY
+MPASM  5.37                          MAIN.ASM   4-12-2017  21:58:45         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+  0000002D            00052 NOW_DAY10
+  0000002E            00053 NOW_MOUNTH
+  0000002F            00054 NOW_MOUNTH10
+  00000030            00055 NOW_YEAR
+  00000031            00056 NOW_YEAR10
+                      00057 ;;ДЛЯ ЗАДЕРЖКИ
+  00000032            00058 TIMER_COUNTER1
+  00000033            00059 TIMER_COUNTER2
+  00000034            00060 TIMER_COUNTER3
+  00000035            00061 TIMER_COUNTER4  ;;для моргания индикаторами
+                      00062 ;;ПЕРЕДАЧА/ПРИЕМ БАЙТА
+  00000036            00063 RW_BYTE         ;; управляющий байт
+  00000037            00064 RW_BYTE1        ;; Принятый байт/ байт для передачи
+                      00065 ;;ДЛЯ ОГРАНИЧЕНИЯ ВВОДА
+Warning[205]: Found directive in column 1. (ENDC)
+                      00066 ENDC
+                      00067 ;;******************* конец переменных ********************
+                      00068 
+                      00069 ;;                              !!! Максимум 8 вызовов CALL !!!
+                      00070 
+Warning[205]: Found directive in column 1. (org)
+0000                  00071 org 0
+                      00072         ;;Инициализация
+0000                  00073 init_lbl
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0000   0183           00074         CLRF            STATUS
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0001   138B           00075         BCF                     INTCON,7                ;;запрет прерываний
+0002   019F           00076         CLRF            ADCON0
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0003   1303           00077         BCF                     STATUS,6                ;;первый бит выбора банка = 0
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0004   1683           00078         BSF                     STATUS,5                ;;второй = 1   => bank #1
+0005   3007           00079         MOVLW           B'00000111'
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0006   009F           00080         MOVWF           ADCON1
+                      00081         ;; порты: A,B,C
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0007   0185           00082         CLRF            TRISA
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0008   1485           00083         BSF                     TRISA,IO
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0009   0186           00084         CLRF            TRISB
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+000A   0187           00085         CLRF            TRISC
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+000B   1507           00086         BSF                     TRISC,2
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+000C   1587           00087         BSF                     TRISC,3
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+000D   1283           00088         BCF                     STATUS,5                ;;  BANK0
+000E   0185           00089         CLRF            PORTA
+000F   0186           00090         CLRF            PORTB
+MPASM  5.37                          MAIN.ASM   4-12-2017  21:58:45         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0010   0187           00091         CLRF            PORTC
+                      00092 
+                      00093 
+                      00094 ;; ///////////////////////////////////////////////////////////////////////
+                      00095 ;; //////////////////////////////// Main /////////////////////////////////
+                      00096 ;; ///////////////////////////////////////////////////////////////////////
+0011                  00097 MAIN
+0011   3000           00098         MOVLW           B'00000000'
+0012   00A5           00099         MOVWF           IBLINKING
+0013   3001           00100         MOVLW           B'00000001'
+0014   00B5           00101         MOVWF           TIMER_COUNTER4
+0015   3000           00102         MOVLW           .0
+0016   00A0           00103         MOVWF           IND1
+0017   00A1           00104         MOVWF           IND2
+0018   00A2           00105         MOVWF           IND3
+0019   00A3           00106         MOVWF           IND4
+001A   3032           00107         MOVLW           .50
+001B   20D3           00108         CALL            SHOWING_DELAY
+001C   300A           00109         MOVLW           .10
+001D   00A0           00110         MOVWF           IND1
+001E   00A1           00111         MOVWF           IND2
+001F   00A2           00112         MOVWF           IND3
+0020   00A3           00113         MOVWF           IND4
+0021   204B           00114         CALL            SHOWING
+0022   1D07           00115         BTFSS           PORTC,B_MODE ;;проверка нажатия кнопки, если нажата,
+0023   2821           00116         GOTO            $-2              ;;то следующая инструкция не выполняется
+0024   28EA           00117         GOTO            SHOWMENU
+Warning[203]: Found opcode in column 1. (GOTO)
+0025   2811           00118 GOTO    MAIN
+                      00119 ;; ///////////////////////////////////////////////////////////////////////
+                      00120 ;; ///////////////////////////////////////////////////////////////////////
+                      00121 ;; ///////////////////////////////////////////////////////////////////////
+                      00122 
+                      00123 ;; **************************** Подпрограммы **************************** 
+                      00124 
+                      00125 
+0026                  00126 CHAR_TABLE
+0026   0782           00127         ADDWF           PCL,1
+0027   34C0           00128         RETLW           B'11000000';0
+0028   34F9           00129         RETLW           B'11111001';1
+0029   34A4           00130         RETLW           B'10100100';2
+002A   34B0           00131         RETLW           B'10110000';3
+002B   3499           00132         RETLW           B'10011001';4
+002C   3492           00133         RETLW           B'10010010';5
+002D   3482           00134         RETLW           B'10000010';6
+002E   34F8           00135         RETLW           B'11111000';7
+002F   3480           00136         RETLW           B'10000000';8
+0030   3490           00137         RETLW           B'10010000';9
+0031   34FF           00138         RETLW           B'11111111';10
+0032   3488           00139         RETLW           B'10001000';A   11
+0033   34C6           00140         RETLW           B'11000110';C   12
+0034   3486           00141         RETLW           B'10000110';E   13
+0035   348E           00142         RETLW           B'10001110';F   14
+MPASM  5.37                          MAIN.ASM   4-12-2017  21:58:45         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0036   34C2           00143         RETLW           B'11000010';G   15
+0037   3489           00144         RETLW           B'10001001';H   16
+0038   34C7           00145         RETLW           B'11000111';L   17
+0039   34AB           00146         RETLW           B'10101011';N   18
+003A   348C           00147         RETLW           B'10001100';P   19
+003B   34C1           00148         RETLW           B'11000001';U   20
+003C   3482           00149         RETLW           B'10000010';Б   21
+003D   3491           00150         RETLW           B'10010001';У   22
+003E   3499           00151         RETLW           B'10011001';Ч   23
+                      00152 
+Warning[203]: Found opcode in column 1. (RETURN)
+003F   0008           00153 RETURN
+                      00154 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+0040                  00155 DELAY  ;; 500 циклов
+0040   30DD           00156         MOVLW           .221
+0041   00B2           00157         MOVWF           TIMER_COUNTER1
+0042   300D           00158         MOVLW           .13
+0043   00B3           00159         MOVWF           TIMER_COUNTER2
+0044   0BB2           00160         DECFSZ          TIMER_COUNTER1,1
+0045   2844           00161         GOTO            $-1
+0046   0BB3           00162         DECFSZ          TIMER_COUNTER2,1
+0047   2844           00163         GOTO            $-3
+0048   0000           00164         NOP
+0049   0000           00165         NOP
+Warning[203]: Found opcode in column 1. (RETURN)
+004A   0008           00166 RETURN
+                      00167 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+004B                  00168 SHOWING
+Message[305]: Using default destination of 1 (file).
+004B   0BB5           00169         DECFSZ          TIMER_COUNTER4
+004C   2850           00170         GOTO            $+4
+004D   09A6           00171         COMF            IDOBLINK,1
+004E   300A           00172         MOVLW           .10
+004F   00B5           00173         MOVWF           TIMER_COUNTER4
+                      00174         
+0050   1C26           00175         BTFSS           IDOBLINK,0              ;;--
+0051   2853           00176         GOTO            $+2                             ;;;ДЛЯ МОРГАНИЯ
+0052   1DA5           00177         BTFSS           IBLINKING,3             ;;__
+0053   1787           00178         BSF                     PORTC,7
+0054   0820           00179         MOVF            IND1,0
+0055   2026           00180         CALL            CHAR_TABLE
+0056   0086           00181         MOVWF           PORTB
+0057   2040           00182         CALL            DELAY
+0058   1387           00183         BCF                     PORTC,7
+                      00184 
+0059   1C26           00185         BTFSS           IDOBLINK,0              ;;--
+005A   285C           00186         GOTO            $+2                             ;;;ДЛЯ МОРГАНИЯ
+005B   1D25           00187         BTFSS           IBLINKING,2             ;;__
+005C   1707           00188         BSF                     PORTC,6
+005D   0821           00189         MOVF            IND2,0
+005E   2026           00190         CALL            CHAR_TABLE
+005F   0086           00191         MOVWF           PORTB
+0060   2040           00192         CALL            DELAY
+MPASM  5.37                          MAIN.ASM   4-12-2017  21:58:45         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0061   1307           00193         BCF                     PORTC,6
+                      00194 
+0062   1C26           00195         BTFSS           IDOBLINK,0              ;;--
+0063   2865           00196         GOTO            $+2                             ;;;ДЛЯ МОРГАНИЯ
+0064   1CA5           00197         BTFSS           IBLINKING,1             ;;__
+0065   1687           00198         BSF                     PORTC,5
+0066   0822           00199         MOVF            IND3,0
+0067   2026           00200         CALL            CHAR_TABLE
+0068   0086           00201         MOVWF           PORTB
+0069   2040           00202         CALL            DELAY
+006A   1287           00203         BCF                     PORTC,5
+                      00204 
+006B   1C26           00205         BTFSS           IDOBLINK,0              ;;--
+006C   286E           00206         GOTO            $+2                             ;;;ДЛЯ МОРГАНИЯ
+006D   1C25           00207         BTFSS           IBLINKING,0             ;;__
+006E   1607           00208         BSF                     PORTC,4
+006F   0823           00209         MOVF            IND4,0
+0070   2026           00210         CALL            CHAR_TABLE
+0071   0086           00211         MOVWF           PORTB
+0072   2040           00212         CALL            DELAY
+0073   1207           00213         BCF                     PORTC,4
+Warning[203]: Found opcode in column 1. (RETURN)
+0074   0008           00214 RETURN
+                      00215 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+0075                  00216 TRANSMISSION_IN ;;ПРИЕМ ОТ DS1302
+0075   3083           00217         MOVLW           DS_R_MINUTES
+0076   00B6           00218         MOVWF           RW_BYTE
+0077   20A7           00219         CALL            CONNECT_DS
+0078   20BA           00220         CALL            READ_BYTE
+0079   0837           00221         MOVF            RW_BYTE1,0
+007A   390F           00222         ANDLW           B'00001111'
+007B   00A8           00223         MOVWF           NOW_MINUTE              ;;<**** M
+                      00224 
+Message[305]: Using default destination of 1 (file).
+007C   0CB7           00225         RRF                     RW_BYTE1
+Message[305]: Using default destination of 1 (file).
+007D   0CB7           00226         RRF                     RW_BYTE1
+Message[305]: Using default destination of 1 (file).
+007E   0CB7           00227         RRF                     RW_BYTE1
+Message[305]: Using default destination of 1 (file).
+007F   0CB7           00228         RRF                     RW_BYTE1
+0080   0837           00229         MOVF            RW_BYTE1,0
+0081   390E           00230         ANDLW           B'00001110'
+0082   00A9           00231         MOVWF           NOW_MINUTE10            ;;<**** 10M
+                      00232 
+0083   3085           00233         MOVLW           DS_R_HOUR
+0084   00B6           00234         MOVWF           RW_BYTE
+0085   20A7           00235         CALL            CONNECT_DS
+0086   20BA           00236         CALL            READ_BYTE
+0087   0837           00237         MOVF            RW_BYTE1,0
+0088   390F           00238         ANDLW           B'00001111'
+0089   00AA           00239         MOVWF           NOW_HOUR                ;;<**** H
+                      00240 
+MPASM  5.37                          MAIN.ASM   4-12-2017  21:58:45         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Message[305]: Using default destination of 1 (file).
+008A   0CB7           00241         RRF                     RW_BYTE1
+Message[305]: Using default destination of 1 (file).
+008B   0CB7           00242         RRF                     RW_BYTE1
+Message[305]: Using default destination of 1 (file).
+008C   0CB7           00243         RRF                     RW_BYTE1
+Message[305]: Using default destination of 1 (file).
+008D   0CB7           00244         RRF                     RW_BYTE1
+008E   0837           00245         MOVF            RW_BYTE1,0
+008F   3902           00246         ANDLW           B'00000010'
+0090   00AB           00247         MOVWF           NOW_HOUR10              ;;<**** 10H
+                      00248 
+0091   3087           00249         MOVLW           DS_R_DAY
+0092   00B6           00250         MOVWF           RW_BYTE
+0093   20A7           00251         CALL            CONNECT_DS
+0094   20BA           00252         CALL            READ_BYTE
+0095   0837           00253         MOVF            RW_BYTE1,0
+0096   390F           00254         ANDLW           B'00001111'
+0097   00AC           00255         MOVWF           NOW_DAY                 ;; DAY
+                      00256         
+Message[305]: Using default destination of 1 (file).
+0098   0CB7           00257         RRF                     RW_BYTE1
+Message[305]: Using default destination of 1 (file).
+0099   0CB7           00258         RRF                     RW_BYTE1
+Message[305]: Using default destination of 1 (file).
+009A   0CB7           00259         RRF                     RW_BYTE1
+Message[305]: Using default destination of 1 (file).
+009B   0CB7           00260         RRF                     RW_BYTE1
+009C   0837           00261         MOVF            RW_BYTE1,0
+009D   3903           00262         ANDLW           B'0000011'
+009E   00AD           00263         MOVWF           NOW_DAY10       ;; 10DAY
+Warning[203]: Found opcode in column 1. (RETURN)
+009F   0008           00264 RETURN
+                      00265 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+00A0                  00266 TRANSMISSION_OUT  ;;ПЕРЕДАЧА
+00A0   20A7           00267         CALL            CONNECT_DS
+00A1   3080           00268         MOVLW           DS_BEGIN_W
+00A2   00B6           00269         MOVWF           RW_BYTE
+00A3   20D2           00270         CALL            WRITE_BYTE
+                      00271         
+                      00272 
+                      00273 
+00A4   1105           00274         BCF                     PORTA,RST
+00A5   1085           00275         BCF                     PORTA,IO
+Warning[203]: Found opcode in column 1. (RETURN)
+00A6   0008           00276 RETURN
+                      00277 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+00A7                  00278 CONNECT_DS
+00A7   1505           00279         BSF                     PORTA,RST
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00A8   1303           00280         BCF                     STATUS,6                ;;первый бит выбора банка = 0
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00A9   1683           00281         BSF                     STATUS,5                ;;второй = 1   => bank #1
+MPASM  5.37                          MAIN.ASM   4-12-2017  21:58:45         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00AA   1085           00282         BCF                     TRISA,IO                ;;0=output
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00AB   1283           00283         BCF                     STATUS,5                ;;второй = 0   => bank #0
+Warning[207]: Found label after column 1. (CONNECT_DS_BEFORE_SETBIT)
+00AC                  00284                 CONNECT_DS_BEFORE_SETBIT
+00AC   1005           00285                 BCF                     PORTA,SCLK ;;4 тика между включением и выключением Sclk = 1мкс п
+                            ри 4Мц
+00AD   1C36           00286                 BTFSS           RW_BYTE,0
+00AE   28B1           00287                 GOTO            CONNECT_DS_BEFORE_SETBIT1
+00AF   1485           00288                 BSF                     PORTA,IO
+00B0   28B3           00289                 GOTO            CONNECT_DS_AFTER_SETBIT
+Warning[207]: Found label after column 1. (CONNECT_DS_BEFORE_SETBIT1)
+00B1                  00290                         CONNECT_DS_BEFORE_SETBIT1
+00B1   1085           00291                         BCF                     PORTA,IO
+00B2   0000           00292                         NOP
+Warning[207]: Found label after column 1. (CONNECT_DS_AFTER_SETBIT)
+00B3                  00293                 CONNECT_DS_AFTER_SETBIT
+00B3   1405           00294                 BSF                     PORTA,SCLK
+00B4   0CB6           00295                 RRF                     RW_BYTE,1
+00B5   13B6           00296                 BCF                     RW_BYTE,7
+00B6   0AB6           00297                 INCF            RW_BYTE,1
+00B7   0BB6           00298                 DECFSZ          RW_BYTE,1
+00B8   28AC           00299                 GOTO            CONNECT_DS_BEFORE_SETBIT
+Warning[203]: Found opcode in column 1. (RETURN)
+00B9   0008           00300 RETURN
+                      00301 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+00BA                  00302 READ_BYTE
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00BA   1303           00303         BCF                     STATUS,6                ;;первый бит выбора банка = 0
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00BB   1683           00304         BSF                     STATUS,5                ;;второй = 1   => bank #1
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00BC   1485           00305         BSF                     TRISA,IO                ;;1=input
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00BD   1283           00306         BCF                     STATUS,5                ;;второй = 0   => bank #0
+00BE   3008           00307         MOVLW           .8
+00BF   00B2           00308         MOVWF           TIMER_COUNTER1
+00C0   01B7           00309         CLRF            RW_BYTE1
+00C1                  00310 READ_BYTE_1
+Message[305]: Using default destination of 1 (file).
+00C1   0CB7           00311         RRF                     RW_BYTE1
+00C2   1005           00312         BCF                     PORTA,SCLK
+00C3   0000           00313         NOP
+00C4   1885           00314         BTFSC           PORTA,IO
+00C5   28C8           00315         GOTO            READ_BYTE_BEFORE
+00C6   13B7           00316         BCF                     RW_BYTE1,7
+00C7   28C9           00317         GOTO            READ_BYTE_AFTER
+00C8                  00318 READ_BYTE_BEFORE
+00C8   17B7           00319         BSF                     RW_BYTE1,7
+00C9                  00320 READ_BYTE_AFTER
+00C9   1405           00321         BSF                     PORTA,SCLK
+00CA   0000           00322         NOP
+MPASM  5.37                          MAIN.ASM   4-12-2017  21:58:45         PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00CB   0000           00323         NOP
+00CC   0BB2           00324         DECFSZ          TIMER_COUNTER1,1
+00CD   28C1           00325         GOTO            READ_BYTE_1
+                      00326 
+00CE   1005           00327         BCF                     PORTA, SCLK
+00CF   1105           00328         BCF                     PORTA,RST
+00D0   1085           00329         BCF                     PORTA,IO
+Warning[203]: Found opcode in column 1. (RETURN)
+00D1   0008           00330 RETURN
+                      00331 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+00D2                  00332 WRITE_BYTE
+                      00333         ;; ЗАПИСЬ БАЙТА ЗДЕСЬ ПОМЕСТИТЬ
+Warning[203]: Found opcode in column 1. (RETURN)
+00D2   0008           00334 RETURN
+                      00335 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+00D3                  00336 SHOWING_DELAY           ;;      W ЦИКЛОВ ПОКАЗА ИЗОБРАЖЕНИЯ
+00D3   00B4           00337         MOVWF           TIMER_COUNTER3
+00D4                  00338 SHOWING_DELAY_before_cycle1
+00D4   204B           00339         CALL            SHOWING
+Message[305]: Using default destination of 1 (file).
+00D5   0BB4           00340         DECFSZ          TIMER_COUNTER3
+00D6   28D4           00341         GOTO            SHOWING_DELAY_before_cycle1
+00D7   0000           00342         NOP
+Warning[203]: Found opcode in column 1. (RETURN)
+00D8   0008           00343 RETURN
+                      00344 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00345 
+00D9                  00346 BUTTON_MODE_PROCESSING ;;После обнаружения нажатия
+00D9   300A           00347         MOVLW           RATTLING_COUNT_SHOWING  ;;защита от дребезга
+00DA   20D3           00348         CALL            SHOWING_DELAY
+00DB   204B           00349         CALL            SHOWING
+00DC   1907           00350         BTFSC           PORTC,B_MODE
+00DD   28DB           00351         GOTO            $-2
+00DE   300A           00352         MOVLW           RATTLING_COUNT_SHOWING  ;;защита от дребезга
+00DF   20D3           00353         CALL            SHOWING_DELAY   
+Warning[203]: Found opcode in column 1. (RETURN)
+00E0   0008           00354 RETURN
+00E1                  00355 BUTTON_SELECT_PROCESSING ;;После обнаружения нажатия
+00E1   300A           00356         MOVLW           RATTLING_COUNT_SHOWING  ;;защита от дребезга
+00E2   20D3           00357         CALL            SHOWING_DELAY
+00E3   204B           00358         CALL            SHOWING
+00E4   1987           00359         BTFSC           PORTC,B_SELECT
+00E5   28E3           00360         GOTO            $-2
+00E6   300A           00361         MOVLW           RATTLING_COUNT_SHOWING  ;;защита от дребезга
+00E7   20D3           00362         CALL            SHOWING_DELAY   
+Warning[203]: Found opcode in column 1. (RETURN)
+00E8   0008           00363 RETURN
+                      00364 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00365 
+00E9                  00366 SET_TIME
+                      00367 
+Warning[203]: Found opcode in column 1. (RETURN)
+00E9   0008           00368 RETURN
+MPASM  5.37                          MAIN.ASM   4-12-2017  21:58:45         PAGE  9
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00369 
+                      00370 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00371 ;;
+                      00372 ;;
+                      00373 ;;                                              Структура меню:
+                      00374 ;;
+                      00375 ;;
+                      00376 ;;                                                                        Вход
+                      00377 ;;                                                                              |
+                      00378 ;;              установка времени включения             |               установка времени/даты
+                      00379 ;;                                                                              |                       
+                                    минуты
+                      00380 ;;                      1       |       2       |       3                       |                       
+                            десятки минут
+                      00381 ;;                                                                              |                       
+                                    часы
+                      00382 ;;                                                                              |                       
+                            десятки часов
+                      00383 ;;                                                                              |                       
+                                    дата
+                      00384 ;;                                                                              |                       
+                                месяц
+                      00385 ;;                                                                              |                       
+                                    год
+                      00386 ;;
+                      00387 ;;
+                      00388 ;;              операция ввода, возвращает в W результат для каждой цифры
+                      00389 ;;
+                      00390 ;;
+                      00391 ;;
+                      00392 ;;
+                      00393 ;;
+                      00394 ;;
+                      00395 
+00EA                  00396 SHOWMENU
+00EA   3009           00397         MOVLW           COUNT_TAPS_MODE_CONST   ;;      устанавливается счетчик нажатий 
+                      00398                                                 ;;      кнопки mode, когда = 0, выход на уровень вверх.
+00EB   00A7           00399         MOVWF           COUNT_TAPS_MODE
+                      00400 
+00EC   3010           00401         MOVLW           .16
+00ED   00A1           00402         MOVWF           IND2
+00EE   3001           00403         MOVLW           .1
+00EF   00A2           00404         MOVWF           IND3                    ;; "HI"
+00F0   300A           00405         MOVLW           .10
+00F1   00A0           00406         MOVWF           IND1
+00F2   00A3           00407         MOVWF           IND4
+                      00408 ;;      50 циклов показа картинки
+00F3   3032           00409         MOVLW           .50
+00F4   20D3           00410         CALL            SHOWING_DELAY
+00F5   204B           00411         CALL            SHOWING
+00F6   1907           00412         BTFSC           PORTC,B_MODE
+00F7   28F5           00413         GOTO            $-2
+00F8   300A           00414         MOVLW           RATTLING_COUNT_SHOWING
+MPASM  5.37                          MAIN.ASM   4-12-2017  21:58:45         PAGE 10
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00F9   20D3           00415         CALL            SHOWING_DELAY           ;;ОТПУСТИЛИ КНОПКУ
+Warning[207]: Found label after column 1. (SHOWMENU_before_transmit)
+00FA                  00416         SHOWMENU_before_transmit
+00FA   2075           00417                 CALL            TRANSMISSION_IN
+00FB   0000           00418                 NOP
+00FC   0828           00419                 MOVF            NOW_MINUTE,0
+00FD   00A3           00420                 MOVWF           IND4
+00FE   0829           00421                 MOVF            NOW_MINUTE10,0
+00FF   00A2           00422                 MOVWF           IND3
+0100   082A           00423                 MOVF            NOW_HOUR,0
+0101   00A1           00424                 MOVWF           IND2
+0102   082B           00425                 MOVF            NOW_HOUR10,0
+0103   00A0           00426                 MOVWF           IND1
+0104   3003           00427                 MOVLW           .3
+0105   20D3           00428                 CALL            SHOWING_DELAY
+0106   1D07           00429                 BTFSS           PORTC,B_MODE
+0107   28FA           00430                 GOTO            SHOWMENU_before_transmit                
+0108                  00431 SHOWMENU_change_time
+0108   3008           00432         MOVLW           .8      
+0109   00A0           00433         MOVWF           IND1
+010A   3013           00434         MOVLW           .19     
+010B   00A1           00435         MOVWF           IND2
+010C   300D           00436         MOVLW           .13     
+010D   00A2           00437         MOVWF           IND3
+010E   300A           00438         MOVLW           .10     
+010F   00A3           00439         MOVWF           IND4
+                      00440 
+Message[305]: Using default destination of 1 (file).
+0110   0BA7           00441         DECFSZ          COUNT_TAPS_MODE
+0111   2913           00442         GOTO            $+2
+0112   2811           00443         GOTO            MAIN
+0113   20D9           00444         CALL            BUTTON_MODE_PROCESSING
+0114   204B           00445         CALL            SHOWING
+0115   1D07           00446         BTFSS           PORTC,B_MODE
+0116   2918           00447         GOTO            $+2     
+0117   296C           00448         GOTO            SHOWMENU_change_shedule
+0118   1D87           00449         BTFSS           PORTC,B_SELECT
+0119   2914           00450         GOTO            $-5
+011A                  00451 SHOWMENU_change_time1                           ;;Установка времени
+011A   20E1           00452         CALL            BUTTON_SELECT_PROCESSING
+011B   2075           00453         CALL            TRANSMISSION_IN
+011C   0000           00454         NOP
+011D   0828           00455         MOVF            NOW_MINUTE,0
+011E   00A3           00456         MOVWF           IND4
+011F   0829           00457         MOVF            NOW_MINUTE10,0
+0120   00A2           00458         MOVWF           IND3
+0121   082A           00459         MOVF            NOW_HOUR,0
+0122   00A1           00460         MOVWF           IND2
+0123   082B           00461         MOVF            NOW_HOUR10,0
+0124   00A0           00462         MOVWF           IND1
+0125   3001           00463         MOVLW           B'00000001'
+0126   00A5           00464         MOVWF           IBLINKING               ;;МОРГАЕТ ЧЕТВЕРТЫЙ ИНДИКАТОР
+0127                  00465 SHOWMENU_change_time_MIN
+MPASM  5.37                          MAIN.ASM   4-12-2017  21:58:45         PAGE 11
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0127   204B           00466         CALL            SHOWING
+0128   1D87           00467         BTFSS           PORTC,B_SELECT
+0129   2934           00468         GOTO            $+.11
+012A   0AA3           00469         INCF            IND4,1 ;; СОХРАНЯЕТСЯ В F
+012B   0823           00470         MOVF            IND4,0
+012C   00A4           00471         MOVWF           IND_TEMP
+012D   3009           00472         MOVLW           .9
+012E   02A4           00473         SUBWF           IND_TEMP,1
+Message[305]: Using default destination of 1 (file).
+012F   0BA4           00474         DECFSZ          IND_TEMP
+0130   2933           00475         GOTO            $+3
+0131   3000           00476         MOVLW           .0
+0132   00A3           00477         MOVWF           IND4
+0133   20E1           00478         CALL            BUTTON_SELECT_PROCESSING
+0134   1D07           00479         BTFSS           PORTC,B_MODE
+0135   2927           00480         GOTO            SHOWMENU_change_time_MIN
+Message[305]: Using default destination of 1 (file).
+0136   0DA5           00481         RLF                     IBLINKING               ;;МОРГАЕТ ТРЕТИЙ ИНД
+0137   20D9           00482         CALL    BUTTON_MODE_PROCESSING
+                      00483 
+0138                  00484 SHOWMENU_change_time_MIN10
+0138   204B           00485         CALL            SHOWING
+0139   1D87           00486         BTFSS           PORTC,B_SELECT
+013A   2945           00487         GOTO            $+.11
+013B   0AA2           00488         INCF            IND3,1 ;; СОХРАНЯЕТСЯ В F
+013C   0822           00489         MOVF            IND3,0
+013D   00A4           00490         MOVWF           IND_TEMP
+013E   3005           00491         MOVLW           .5
+013F   02A4           00492         SUBWF           IND_TEMP,1
+Message[305]: Using default destination of 1 (file).
+0140   0BA4           00493         DECFSZ          IND_TEMP
+0141   2944           00494         GOTO            $+3
+0142   3000           00495         MOVLW           .0
+0143   00A2           00496         MOVWF           IND3
+0144   20E1           00497         CALL            BUTTON_SELECT_PROCESSING
+0145   1D07           00498         BTFSS           PORTC,B_MODE
+0146   2938           00499         GOTO            SHOWMENU_change_time_MIN10
+0147   300C           00500         MOVLW           B'00001100'
+0148   00A5           00501         MOVWF           IBLINKING               ;;МОРГАЕТ ВТОРОЙ И ПЕРВЫЙ ИНД
+0149   20D9           00502         CALL    BUTTON_MODE_PROCESSING
+014A                  00503 SHOWMENU_change_time_HOUR
+014A   204B           00504         CALL            SHOWING
+014B   1D87           00505         BTFSS           PORTC,B_SELECT
+014C   2967           00506         GOTO            $+.27
+014D   0AA1           00507         INCF            IND2,1 ;; СОХРАНЯЕТСЯ В F
+014E   0821           00508         MOVF            IND2,0
+014F   00A4           00509         MOVWF           IND_TEMP
+0150   3009           00510         MOVLW           .9                                              
+0151   02A4           00511         SUBWF           IND_TEMP,1                                      
+Message[305]: Using default destination of 1 (file).
+0152   0BA4           00512         DECFSZ          IND_TEMP
+0153   2957           00513         GOTO            $+.4
+0154   3000           00514         MOVLW           .0
+MPASM  5.37                          MAIN.ASM   4-12-2017  21:58:45         PAGE 12
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0155   00A1           00515         MOVWF           IND2
+0156   0AA0           00516         INCF            IND1,1
+0157   0820           00517         MOVF            IND1,0
+0158   00A4           00518         MOVWF           IND_TEMP
+0159   3001           00519         MOVLW           .1                                                      
+015A   02A4           00520         SUBWF           IND_TEMP,1      ;; 1я цифра - 2                         
+Message[305]: Using default destination of 1 (file).
+015B   0BA4           00521         DECFSZ          IND_TEMP
+015C   2966           00522         GOTO            $+.10
+015D   0821           00523         MOVF            IND2,0
+015E   00A4           00524         MOVWF           IND_TEMP        
+015F   3003           00525         MOVLW           .3
+0160   02A4           00526         SUBWF           IND_TEMP,1      ;; 2я цифра - 4                         
+Message[305]: Using default destination of 1 (file).
+0161   0BA4           00527         DECFSZ          IND_TEMP
+0162   2966           00528         GOTO            $+.4
+0163   3000           00529                 MOVLW           .0
+0164   00A0           00530                 MOVWF           IND1
+0165   00A1           00531                 MOVWF           IND2
+0166   20E1           00532         CALL            BUTTON_SELECT_PROCESSING
+0167   1D07           00533         BTFSS           PORTC,B_MODE
+0168   294A           00534         GOTO            SHOWMENU_change_time_HOUR
+                      00535 
+                      00536 ;;      здесь должно быть TRANSMITION_OUT
+0169   3000           00537         MOVLW           .0
+016A   00A5           00538         MOVWF           IBLINKING
+016B   28FA           00539         GOTO            SHOWMENU_before_transmit
+                      00540 
+016C                  00541 SHOWMENU_change_shedule
+016C   3013           00542         MOVLW           .19     
+016D   00A0           00543         MOVWF           IND1
+016E   300D           00544         MOVLW           .13     
+016F   00A1           00545         MOVWF           IND2
+0170   300A           00546         MOVLW           .10     
+0171   00A2           00547         MOVWF           IND3
+0172   300A           00548         MOVLW           .10     
+0173   00A3           00549         MOVWF           IND4
+                      00550 
+Message[305]: Using default destination of 1 (file).
+0174   0BA7           00551         DECFSZ          COUNT_TAPS_MODE
+0175   2977           00552         GOTO            $+2
+0176   2811           00553         GOTO            MAIN
+0177   20D9           00554         CALL            BUTTON_MODE_PROCESSING
+0178   204B           00555         CALL            SHOWING
+0179   1D07           00556         BTFSS           PORTC,B_MODE
+017A   2978           00557         GOTO            $-2
+017B   297C           00558         GOTO SHOWMENU_reset
+                      00559 
+017C                  00560 SHOWMENU_reset
+017C   300C           00561         MOVLW           .12     
+017D   00A0           00562         MOVWF           IND1
+017E   3015           00563         MOVLW           .21     
+017F   00A1           00564         MOVWF           IND2
+MPASM  5.37                          MAIN.ASM   4-12-2017  21:58:45         PAGE 13
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0180   3013           00565         MOVLW           .19     
+0181   00A2           00566         MOVWF           IND3
+0182   3000           00567         MOVLW           .0      
+0183   00A3           00568         MOVWF           IND4
+                      00569 
+Message[305]: Using default destination of 1 (file).
+0184   0BA7           00570         DECFSZ          COUNT_TAPS_MODE
+0185   2987           00571         GOTO            $+2
+0186   2811           00572         GOTO            MAIN
+0187   20D9           00573         CALL            BUTTON_MODE_PROCESSING
+0188   204B           00574         CALL            SHOWING
+0189   1D07           00575         BTFSS           PORTC,B_MODE
+018A   2988           00576         GOTO            $-2
+018B   298C           00577         GOTO            SHOWMENU_manual_control
+                      00578 
+018C                  00579 SHOWMENU_manual_control
+018C   3013           00580         MOVLW           .19     
+018D   00A0           00581         MOVWF           IND1
+018E   3016           00582         MOVLW           .22     
+018F   00A1           00583         MOVWF           IND2
+0190   3017           00584         MOVLW           .23     
+0191   00A2           00585         MOVWF           IND3
+0192   3010           00586         MOVLW           .16     
+0193   00A3           00587         MOVWF           IND4
+                      00588         
+Message[305]: Using default destination of 1 (file).
+0194   0BA7           00589         DECFSZ          COUNT_TAPS_MODE
+0195   2997           00590         GOTO            $+2
+0196   2811           00591         GOTO            MAIN
+0197   20D9           00592         CALL            BUTTON_MODE_PROCESSING
+0198   204B           00593         CALL            SHOWING
+0199   1D07           00594         BTFSS           PORTC,B_MODE
+019A   2998           00595         GOTO            $-2
+Warning[203]: Found opcode in column 1. (GOTO)
+019B   2908           00596 GOTO SHOWMENU_change_time
+                      00597 
+Warning[203]: Found opcode in column 1. (GOTO)
+019C   2811           00598 GOTO    MAIN
+Warning[205]: Found directive in column 1. (end)
+                      00599 end
+MPASM  5.37                          MAIN.ASM   4-12-2017  21:58:45         PAGE 14
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+ADCON0                            0000001F
+ADCON1                            0000009F
+BUTTON_MODE_PROCESSING            000000D9
+BUTTON_SELECT_PROCESSING          000000E1
+B_MODE                            00000002
+B_SELECT                          00000003
+CHAR_TABLE                        00000026
+CONNECT_DS                        000000A7
+CONNECT_DS_AFTER_SETBIT           000000B3
+CONNECT_DS_BEFORE_SETBIT          000000AC
+CONNECT_DS_BEFORE_SETBIT1         000000B1
+COUNT_TAPS_MODE                   00000027
+COUNT_TAPS_MODE_CONST             00000009
+COUNT_TAPS_MODE_CONST1            00000007
+DELAY                             00000040
+DS_BEGIN_W                        00000080
+DS_R_DAY                          00000087
+DS_R_HOUR                         00000085
+DS_R_MINUTES                      00000083
+DS_R_MONTH                        00000089
+DS_W_DAY                          00000086
+DS_W_HOUR                         00000084
+DS_W_MINUTES                      00000082
+DS_W_MONTH                        00000088
+IBLINKING                         00000025
+IDOBLINK                          00000026
+IND1                              00000020
+IND2                              00000021
+IND3                              00000022
+IND4                              00000023
+IND_TEMP                          00000024
+INTCON                            0000008B
+IO                                00000001
+MAIN                              00000011
+NOW_DAY                           0000002C
+NOW_DAY10                         0000002D
+NOW_HOUR                          0000002A
+NOW_HOUR10                        0000002B
+NOW_MINUTE                        00000028
+NOW_MINUTE10                      00000029
+NOW_MOUNTH                        0000002E
+NOW_MOUNTH10                      0000002F
+NOW_YEAR                          00000030
+NOW_YEAR10                        00000031
+PCL                               00000002
+PORTA                             00000005
+PORTB                             00000006
+PORTC                             00000007
+RATTLING_COUNT_SHOWING            0000000A
+READ_BYTE                         000000BA
+READ_BYTE_1                       000000C1
+READ_BYTE_AFTER                   000000C9
+READ_BYTE_BEFORE                  000000C8
+MPASM  5.37                          MAIN.ASM   4-12-2017  21:58:45         PAGE 15
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+RST                               00000002
+RW_BYTE                           00000036
+RW_BYTE1                          00000037
+SCLK                              00000000
+SET_TIME                          000000E9
+SHOWING                           0000004B
+SHOWING_DELAY                     000000D3
+SHOWING_DELAY_before_cycle1       000000D4
+SHOWMENU                          000000EA
+SHOWMENU_before_transmit          000000FA
+SHOWMENU_change_shedule           0000016C
+SHOWMENU_change_time              00000108
+SHOWMENU_change_time1             0000011A
+SHOWMENU_change_time_HOUR         0000014A
+SHOWMENU_change_time_MIN          00000127
+SHOWMENU_change_time_MIN10        00000138
+SHOWMENU_manual_control           0000018C
+SHOWMENU_reset                    0000017C
+STATUS                            00000083
+TIMER_COUNTER1                    00000032
+TIMER_COUNTER2                    00000033
+TIMER_COUNTER3                    00000034
+TIMER_COUNTER4                    00000035
+TRANSMISSION_IN                   00000075
+TRANSMISSION_OUT                  000000A0
+TRISA                             00000085
+TRISB                             00000086
+TRISC                             00000087
+WRITE_BYTE                        000000D2
+__16F876A                         00000001
+__DEBUG                           1
+init_lbl                          00000000
+
+
+MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
+
+0000 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0040 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0080 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+00C0 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0100 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0140 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0180 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXX--- ---------------- ----------------
+2000 : -------X-------- ---------------- ---------------- ----------------
+
+All other memory blocks unused.
+
+Program Memory Words Used:   413
+Program Memory Words Free:  7779
+
+
+MPASM  5.37                          MAIN.ASM   4-12-2017  21:58:45         PAGE 16
+
+
+
+
+
+Errors   :     0
+Warnings :    23 reported,     0 suppressed
+Messages :    45 reported,     0 suppressed
+
+
