@@ -1,4 +1,4 @@
-MPASM  5.37                          MAIN.ASM   4-13-2017  12:31:58         PAGE  1
+MPASM  5.37                          MAIN.ASM   4-13-2017  12:42:00         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -57,7 +57,7 @@ Warning[205]: Found directive in column 1. (CBLOCK)
   0000002A            00049 NOW_HOUR
   0000002B            00050 NOW_HOUR10
   0000002C            00051 NOW_DAY
-MPASM  5.37                          MAIN.ASM   4-13-2017  12:31:58         PAGE  2
+MPASM  5.37                          MAIN.ASM   4-13-2017  12:42:00         PAGE  2
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -116,7 +116,7 @@ Message[302]: Register in operand not in bank 0.  Ensure that bank bits are corr
 000D   1283           00088         BCF                     STATUS,5                ;;  BANK0
 000E   0185           00089         CLRF            PORTA
 000F   0186           00090         CLRF            PORTB
-MPASM  5.37                          MAIN.ASM   4-13-2017  12:31:58         PAGE  3
+MPASM  5.37                          MAIN.ASM   4-13-2017  12:42:00         PAGE  3
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -175,7 +175,7 @@ Warning[203]: Found opcode in column 1. (GOTO)
 0033   34C6           00140         RETLW           B'11000110';C   12
 0034   3486           00141         RETLW           B'10000110';E   13
 0035   348E           00142         RETLW           B'10001110';F   14
-MPASM  5.37                          MAIN.ASM   4-13-2017  12:31:58         PAGE  4
+MPASM  5.37                          MAIN.ASM   4-13-2017  12:42:00         PAGE  4
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -234,7 +234,7 @@ Message[305]: Using default destination of 1 (file).
 005E   2026           00190         CALL            CHAR_TABLE
 005F   0086           00191         MOVWF           PORTB
 0060   2040           00192         CALL            DELAY
-MPASM  5.37                          MAIN.ASM   4-13-2017  12:31:58         PAGE  5
+MPASM  5.37                          MAIN.ASM   4-13-2017  12:42:00         PAGE  5
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -282,7 +282,7 @@ Message[305]: Using default destination of 1 (file).
 Message[305]: Using default destination of 1 (file).
 007F   0CB7           00228         RRF                     RW_BYTE1
 0080   0837           00229         MOVF            RW_BYTE1,0
-0081   390E           00230         ANDLW           B'00001110'
+0081   390F           00230         ANDLW           B'00001111'
 0082   00A9           00231         MOVWF           NOW_MINUTE10            ;;<**** 10M
                       00232 
 0083   3085           00233         MOVLW           DS_R_HOUR
@@ -293,7 +293,7 @@ Message[305]: Using default destination of 1 (file).
 0088   390F           00238         ANDLW           B'00001111'
 0089   00AA           00239         MOVWF           NOW_HOUR                ;;<**** H
                       00240 
-MPASM  5.37                          MAIN.ASM   4-13-2017  12:31:58         PAGE  6
+MPASM  5.37                          MAIN.ASM   4-13-2017  12:42:00         PAGE  6
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -308,7 +308,7 @@ Message[305]: Using default destination of 1 (file).
 Message[305]: Using default destination of 1 (file).
 008D   0CB7           00244         RRF                     RW_BYTE1
 008E   0837           00245         MOVF            RW_BYTE1,0
-008F   3902           00246         ANDLW           B'00000010'
+008F   3903           00246         ANDLW           B'00000011'
 0090   00AB           00247         MOVWF           NOW_HOUR10              ;;<**** 10H
                       00248 
 0091   3087           00249         MOVLW           DS_R_DAY
@@ -352,7 +352,7 @@ Message[302]: Register in operand not in bank 0.  Ensure that bank bits are corr
 00A8   1303           00280         BCF                     STATUS,6                ;;первый бит выбора банка = 0
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
 00A9   1683           00281         BSF                     STATUS,5                ;;второй = 1   => bank #1
-MPASM  5.37                          MAIN.ASM   4-13-2017  12:31:58         PAGE  7
+MPASM  5.37                          MAIN.ASM   4-13-2017  12:42:00         PAGE  7
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -411,7 +411,7 @@ Message[305]: Using default destination of 1 (file).
 00C9                  00320 READ_BYTE_AFTER
 00C9   1405           00321         BSF                     PORTA,SCLK
 00CA   0000           00322         NOP
-MPASM  5.37                          MAIN.ASM   4-13-2017  12:31:58         PAGE  8
+MPASM  5.37                          MAIN.ASM   4-13-2017  12:42:00         PAGE  8
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -470,7 +470,7 @@ Warning[203]: Found opcode in column 1. (RETURN)
 00E9   20E1           00367         CALL            BUTTON_SELECT_PROCESSING
 00EA   2075           00368         CALL            TRANSMISSION_IN
 00EB   0000           00369         NOP
-MPASM  5.37                          MAIN.ASM   4-13-2017  12:31:58         PAGE  9
+MPASM  5.37                          MAIN.ASM   4-13-2017  12:42:00         PAGE  9
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -529,7 +529,7 @@ Message[305]: Using default destination of 1 (file).
 0118   20D9           00417         CALL    BUTTON_MODE_PROCESSING
 0119                  00418 SET_TIME_HOUR
 0119   204B           00419         CALL            SHOWING
-MPASM  5.37                          MAIN.ASM   4-13-2017  12:31:58         PAGE 10
+MPASM  5.37                          MAIN.ASM   4-13-2017  12:42:00         PAGE 10
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -588,7 +588,7 @@ Warning[203]: Found opcode in column 1. (RETURN)
                                     минуты
                       00466 ;;                      1       |       2       |       3                       |                       
                             десятки минут
-MPASM  5.37                          MAIN.ASM   4-13-2017  12:31:58         PAGE 11
+MPASM  5.37                          MAIN.ASM   4-13-2017  12:42:00         PAGE 11
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -647,7 +647,7 @@ Warning[207]: Found label after column 1. (SHOWMENU_before_transmit)
 0153   082B           00511                 MOVF            NOW_HOUR10,0
 0154   00A0           00512                 MOVWF           IND1
 0155   3003           00513                 MOVLW           .3
-MPASM  5.37                          MAIN.ASM   4-13-2017  12:31:58         PAGE 12
+MPASM  5.37                          MAIN.ASM   4-13-2017  12:42:00         PAGE 12
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -706,7 +706,7 @@ Message[305]: Using default destination of 1 (file).
 017E   00A0           00562         MOVWF           IND1
 017F   3015           00563         MOVLW           .21     
 0180   00A1           00564         MOVWF           IND2
-MPASM  5.37                          MAIN.ASM   4-13-2017  12:31:58         PAGE 13
+MPASM  5.37                          MAIN.ASM   4-13-2017  12:42:00         PAGE 13
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -752,7 +752,7 @@ Warning[203]: Found opcode in column 1. (GOTO)
 019D   2811           00598 GOTO    MAIN
 Warning[205]: Found directive in column 1. (end)
                       00599 end
-MPASM  5.37                          MAIN.ASM   4-13-2017  12:31:58         PAGE 14
+MPASM  5.37                          MAIN.ASM   4-13-2017  12:42:00         PAGE 14
 
 
 SYMBOL TABLE
@@ -811,7 +811,7 @@ READ_BYTE                         000000BA
 READ_BYTE_1                       000000C1
 READ_BYTE_AFTER                   000000C9
 READ_BYTE_BEFORE                  000000C8
-MPASM  5.37                          MAIN.ASM   4-13-2017  12:31:58         PAGE 15
+MPASM  5.37                          MAIN.ASM   4-13-2017  12:42:00         PAGE 15
 
 
 SYMBOL TABLE
@@ -867,7 +867,7 @@ Program Memory Words Used:   414
 Program Memory Words Free:  7778
 
 
-MPASM  5.37                          MAIN.ASM   4-13-2017  12:31:58         PAGE 16
+MPASM  5.37                          MAIN.ASM   4-13-2017  12:42:00         PAGE 16
 
 
 
