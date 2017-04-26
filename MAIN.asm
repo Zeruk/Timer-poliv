@@ -273,13 +273,13 @@ TRANSMISSION_OUT  ;;ПЕРЕДАЧА данных
 ;; очистили бит защиты записи
 
 ;; записываем в DS минуты 
-	MOVF		NOW_MINUTES10,0
+	MOVF		NOW_MINUTE10,0
 	MOVWF		RW_BYTE1
 	RLF			RW_BYTE1,1
 	RLF			RW_BYTE1,1
 	RLF			RW_BYTE1,1
 	RLF			RW_BYTE1,1
-	MOVF		NOW_MINUTES,0
+	MOVF		NOW_MINUTE,0
 	IORWF		RW_BYTE1,1
 	MOVLW		DS_W_MINUTES
 	MOVWF		RW_BYTE
@@ -296,13 +296,11 @@ TRANSMISSION_OUT  ;;ПЕРЕДАЧА данных
 	MOVF		NOW_HOUR,0
 	IORWF		RW_BYTE1,1
 	BCF			RW_BYTE1,7
-	MOVLW		DS_W_MINUTES
+	MOVLW		DS_W_HOUR
 	MOVWF		RW_BYTE
 	CALL		CONNECT_DS
 	CALL		WRITE_BYTE
 	
-
-
 	BCF			PORTA,RST
 	BCF			PORTA,IO
 RETURN
@@ -362,8 +360,29 @@ READ_BYTE_AFTER
 RETURN
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 WRITE_BYTE
-	;; ЗАПИСЬ БАЙТА ЗДЕСЬ ПОМЕСТИТЬ
-	
+	BCF			STATUS,6 		;;первый бит выбора банка = 0
+	BSF			STATUS,5		;;второй = 1   => bank #1
+	BCF			TRISA,IO		;; IO = 0 = output
+	BCF			STATUS,5		;;второй = 0   => bank #0
+
+	MOVLW		.8
+	MOVWF		TIMER_COUNTER1
+
+; RW_BYTE1 - Байт с данными
+	DECFSZ		TIMER_COUNTER1
+	GOTO		$+2
+	RETURN
+	BCF			PORTA,SCLK
+	NOP
+	BCF			PORTA,IO
+	BTFSS		RW_BYTE1,7
+	GOTO		$+2
+	BSF			PORTA,IO
+	NOP
+	BSF			PORTA,SCLK
+	NOP
+	RRF			RW_BYTE1
+	GOTO		$-.13
 RETURN
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 SHOWING_DELAY		;;	W ЦИКЛОВ ПОКАЗА ИЗОБРАЖЕНИЯ
@@ -395,7 +414,8 @@ BUTTON_SELECT_PROCESSING ;;После обнаружения нажатия
 	CALL		SHOWING_DELAY	
 RETURN
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+;;					ПРОЦЕДУРА УСТАНОВКИ ВРЕМЕНИ							;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 SET_TIME;;Установка времени				
 	CALL		BUTTON_SELECT_PROCESSING
 	CALL		TRANSMISSION_IN
@@ -484,6 +504,7 @@ SET_TIME_HOUR
 ;;	здесь должно быть TRANSMITION_OUT
 	MOVLW		.0
 	MOVWF		IBLINKING
+	CALL		TRANSMISSION_OUT
 RETURN
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
