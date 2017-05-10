@@ -29,8 +29,9 @@ DS_WP		EQU		8Eh
 ;;
 B_MODE		EQU		.2
 B_SELECT	EQU		.3
+RELAY		EQU		.1
 ;;	Количество показов, чтобы избежать дребезга
-RATTLING_COUNT_SHOWING	EQU		.10						;;;!!! ПРОТЕСТИРОВАТЬ !!!
+RATTLING_COUNT_SHOWING	EQU		.15						;;;!!! ПРОТЕСТИРОВАТЬ !!!
 COUNT_TAPS_MODE_CONST	EQU		.9
 COUNT_TAPS_MODE_CONST1	EQU		.7
 CBLOCK 0x20
@@ -104,7 +105,7 @@ MAIN
 	MOVWF		IND2
 	MOVWF		IND3
 	MOVWF		IND4
-	MOVLW		.50
+	MOVLW		.150
 	CALL		SHOWING_DELAY
 	MOVLW		.10
 	MOVWF		IND1
@@ -145,17 +146,18 @@ CHAR_TABLE
 	RETLW		B'11000111';L	17
 	RETLW		B'10101011';N	18
 	RETLW		B'10001100';P	19
-	RETLW		B'11000001';U	20
-	RETLW		B'10000010';Б	21
-	RETLW		B'10010001';У	22
-	RETLW		B'10011001';Ч	23
+	RETLW		B'11011011';S=5	20 
+	RETLW		B'11000001';U	21
+	RETLW		B'10000010';Б	22
+	RETLW		B'10010001';У	23
+	RETLW		B'10011001';Ч	24
 
 RETURN
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-DELAY  ;; 500 циклов
+DELAY  ;; 500 циклов NO
 	MOVLW		.221
 	MOVWF		TIMER_COUNTER1
-	MOVLW		.13
+	MOVLW		.1
 	MOVWF		TIMER_COUNTER2
 	DECFSZ		TIMER_COUNTER1,1
 	GOTO		$-1
@@ -169,7 +171,7 @@ SHOWING
 	DECFSZ		TIMER_COUNTER4
 	GOTO		$+4
 	COMF		IDOBLINK,1
-	MOVLW		.10
+	MOVLW		.20
 	MOVWF		TIMER_COUNTER4
 	
 	BTFSS		IDOBLINK,0		;;--
@@ -269,6 +271,7 @@ TRANSMISSION_OUT  ;;ПЕРЕДАЧА данных
 	CALL		CONNECT_DS
 	MOVLW		b'00000000'	
 	MOVWF		RW_BYTE1
+	RRF			RW_BYTE1,0
 	CALL		WRITE_BYTE
 ;; очистили бит защиты записи
 
@@ -365,17 +368,17 @@ WRITE_BYTE
 	BCF			TRISA,IO		;; IO = 0 = output
 	BCF			STATUS,5		;;второй = 0   => bank #0
 
-	MOVLW		.8
+	MOVLW		.9
 	MOVWF		TIMER_COUNTER1
 
 ; RW_BYTE1 - Байт с данными
 	DECFSZ		TIMER_COUNTER1
 	GOTO		$+2
-	RETURN
+	GOTO		$+.12
 	BCF			PORTA,SCLK
 	NOP
 	BCF			PORTA,IO
-	BTFSS		RW_BYTE1,7
+	BTFSS		RW_BYTE1,0
 	GOTO		$+2
 	BSF			PORTA,IO
 	NOP
@@ -383,6 +386,12 @@ WRITE_BYTE
 	NOP
 	RRF			RW_BYTE1
 	GOTO		$-.13
+	BCF			PORTA,SCLK
+	NOP
+	NOP
+	NOP
+	NOP
+	BCF			PORTA,RST
 RETURN
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 SHOWING_DELAY		;;	W ЦИКЛОВ ПОКАЗА ИЗОБРАЖЕНИЯ
@@ -446,6 +455,8 @@ SET_TIME_MIN
 	CALL		BUTTON_SELECT_PROCESSING
 	BTFSS		PORTC,B_MODE
 	GOTO		SET_TIME_MIN
+	MOVF		IND4,0
+	MOVWF		NOW_MINUTE
 	RLF			IBLINKING		;;МОРГАЕТ ТРЕТИЙ ИНД
 	CALL	BUTTON_MODE_PROCESSING
 
@@ -465,6 +476,8 @@ SET_TIME_MIN10
 	CALL		BUTTON_SELECT_PROCESSING
 	BTFSS		PORTC,B_MODE
 	GOTO		SET_TIME_MIN10
+	MOVF		IND3,0
+	MOVWF		NOW_MINUTE10
 	MOVLW		B'00001100'
 	MOVWF		IBLINKING		;;МОРГАЕТ ВТОРОЙ И ПЕРВЫЙ ИНД
 	CALL	BUTTON_MODE_PROCESSING
@@ -500,6 +513,10 @@ SET_TIME_HOUR
 	CALL		BUTTON_SELECT_PROCESSING
 	BTFSS		PORTC,B_MODE
 	GOTO		SET_TIME_HOUR
+	MOVF		IND2,0
+	MOVWF		NOW_HOUR
+	MOVF		IND1,0
+	MOVWF		NOW_HOUR10
 
 ;;	здесь должно быть TRANSMITION_OUT
 	MOVLW		.0
@@ -513,18 +530,34 @@ RETURN
 ;;						Структура меню:
 ;;
 ;;
-;;							  		  Вход
-;;										|
-;;		установка времени включения		|		установка времени/даты
-;;										|				минуты
-;;			1	|	2	|	3			|			десятки минут
-;;										|				часы
-;;										|			десятки часов
-;;										|				дата
-;;										|			    месяц
-;;										|				год
-;;
-;;
+;;	Вход
+;;	|
+;;	|+		установка времени/даты		
+;;	|+				минуты
+;;	|+				десятки минут
+;;	|+				часы
+;;	|+				десятки часов
+;;	|		режим
+;;	|			    1
+;;	|					off/on		
+;;  |					время включения				
+;;	|						минуты
+;;	|						десятки минут
+;;	|						часы
+;;	|						десятки часов
+;;	|					время выключения			
+;;	|						минуты
+;;	|						десятки минут
+;;	|						часы
+;;	|						десятки часов
+;;	|				2	-=-
+;;	|				3	-=-
+;;	|+		сброс
+;;	|+				NO
+;;	|+				YES
+;;	|+		ручное управление - по нажатию открытие реле
+;;	|
+;;	|
 ;;		операция ввода, возвращает в W результат для каждой цифры
 ;;
 ;;
@@ -578,9 +611,6 @@ SHOWMENU_change_time
 	MOVLW		.10	
 	MOVWF		IND4
 
-	DECFSZ		COUNT_TAPS_MODE
-	GOTO		$+2
-	GOTO		MAIN
 	CALL		BUTTON_MODE_PROCESSING
 	CALL		SHOWING
 	BTFSS		PORTC,B_MODE
@@ -602,52 +632,102 @@ SHOWMENU_change_shedule
 	MOVLW		.10	
 	MOVWF		IND4
 
-	DECFSZ		COUNT_TAPS_MODE
-	GOTO		$+2
-	GOTO		MAIN
 	CALL		BUTTON_MODE_PROCESSING
 	CALL		SHOWING
 	BTFSS		PORTC,B_MODE
 	GOTO		$-2
-	GOTO SHOWMENU_reset
+	GOTO SHOWMENU_reset  ;;		дописать 
 
 SHOWMENU_reset
 	MOVLW		.12	
 	MOVWF		IND1
-	MOVLW		.21	
+	MOVLW		.22	
 	MOVWF		IND2
 	MOVLW		.19	
 	MOVWF		IND3
-	MOVLW		.0	
+	MOVLW		.12	
 	MOVWF		IND4
 
-	DECFSZ		COUNT_TAPS_MODE
-	GOTO		$+2
-	GOTO		MAIN
 	CALL		BUTTON_MODE_PROCESSING
 	CALL		SHOWING
 	BTFSS		PORTC,B_MODE
-	GOTO		$-2
+	GOTO		$+2
 	GOTO		SHOWMENU_manual_control
+	BTFSS		PORTC,B_SELECT
+	GOTO		$-5
+		;; НАЖАТА КНОПКА SELECT
+				;; NO
+	MOVLW		.18	
+	MOVWF		IND1
+	MOVLW		.0	
+	MOVWF		IND2
+	MOVLW		.10	
+	MOVWF		IND3
+	MOVLW		.10	
+	MOVWF		IND4
+	CALL		BUTTON_SELECT_PROCESSING
+	CALL		SHOWING
+	BTFSS		PORTC,B_MODE
+	GOTO		$+2
+	GOTO		$+4
+	BTFSS		PORTC,B_SELECT
+	GOTO		$-5
+	GOTO		MAIN
+				;; YES
+	MOVLW		.23	
+	MOVWF		IND1
+	MOVLW		.13	
+	MOVWF		IND2
+	MOVLW		.5	
+	MOVWF		IND3
+	MOVLW		.10	
+	MOVWF		IND4
+	CALL		BUTTON_MODE_PROCESSING
+
+	CALL		SHOWING
+	BTFSS		PORTC,B_MODE
+	GOTO		$+.11
+	MOVLW		.18	
+	MOVWF		IND1
+	MOVLW		.0	
+	MOVWF		IND2
+	MOVLW		.10	
+	MOVWF		IND3
+	MOVLW		.10	
+	MOVWF		IND4
+	CALL		BUTTON_MODE_PROCESSING
+	GOTO		$-.28
+	BTFSS		PORTC,B_SELECT
+	GOTO		$-.14
+	;CALL		FRESET ;;   <------              **  FRESET  **
+	MOVLW		B'00001111'
+	MOVWF		IBLINKING	
+	MOVLW		.250
+	CALL		SHOWING_DELAY
+	GOTO 		MAIN
+	
+	
+	CALL		BUTTON_MODE_PROCESSING
 
 SHOWMENU_manual_control
 	MOVLW		.19	
 	MOVWF		IND1
-	MOVLW		.22	
-	MOVWF		IND2
 	MOVLW		.23	
+	MOVWF		IND2
+	MOVLW		.24	
 	MOVWF		IND3
 	MOVLW		.16	
 	MOVWF		IND4
 	
-	DECFSZ		COUNT_TAPS_MODE
-	GOTO		$+2
-	GOTO		MAIN
 	CALL		BUTTON_MODE_PROCESSING
 	CALL		SHOWING
+	BTFSS		PORTC,B_SELECT
+	GOTO		$+4
+	BSF			PORTC,RELAY
+	CALL		BUTTON_SELECT_PROCESSING
+	BCF			PORTC,RELAY
 	BTFSS		PORTC,B_MODE
-	GOTO		$-2
-GOTO SHOWMENU_change_time
+	GOTO		$-7
 
 GOTO	MAIN
 end
