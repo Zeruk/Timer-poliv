@@ -13,6 +13,10 @@ PORTC		EQU		07h
 PCL			EQU		02h
 ADCON0		EQU		1Fh
 ADCON1		EQU		9Fh
+EEADR		EQU		10Dh
+EEDATA		EQU		10Ch
+EECON1		EQU		18Ch
+EECON2		EQU		18Dh
 ;; DS1302 константы
 RST			EQU		.2
 SCLK		EQU		.0
@@ -21,17 +25,13 @@ DS_W_MINUTES	EQU		82h
 DS_R_MINUTES	EQU		83h
 DS_W_HOUR	EQU		84h
 DS_R_HOUR	EQU		85h
-;DS_W_DAY	EQU		86h
-;DS_R_DAY	EQU		87h
-;DS_W_MONTH	EQU		88h
-;DS_R_MONTH	EQU		89h
 DS_WP		EQU		8Eh
 ;;
 B_MODE		EQU		.2
 B_SELECT	EQU		.3
 RELAY		EQU		.1
 ;;	Количество показов, чтобы избежать дребезга
-RATTLING_COUNT_SHOWING	EQU		.15						;;;!!! ПРОТЕСТИРОВАТЬ !!!
+RATTLING_COUNT_SHOWING	EQU		.15			;;!!! ПРОТЕСТИРОВАТЬ !!!
 COUNT_TAPS_MODE_CONST	EQU		.9
 COUNT_TAPS_MODE_CONST1	EQU		.7
 CBLOCK 0x20
@@ -49,12 +49,6 @@ NOW_MINUTE
 NOW_MINUTE10
 NOW_HOUR
 NOW_HOUR10
-;NOW_DAY
-;NOW_DAY10
-;NOW_MOUNTH
-;NOW_MOUNTH10
-;NOW_YEAR
-;NOW_YEAR10
 ;;ДЛЯ ЗАДЕРЖКИ
 TIMER_COUNTER1
 TIMER_COUNTER2
@@ -62,8 +56,14 @@ TIMER_COUNTER3
 TIMER_COUNTER4	;;для моргания индикаторами
 ;;ПЕРЕДАЧА/ПРИЕМ БАЙТА
 RW_BYTE		;; управляющий байт
-RW_BYTE1 	;; Принятый байт/ байт для передачи
+RW_BYTE1 	;; Принятый байт/ байт для передачи  0x31
 ;;ДЛЯ ОГРАНИЧЕНИЯ ВВОДА
+CURR_SKED		;;Текущий режим
+;;первый режим, этот байт - минуты
+							;;второй байт - десятки минут
+							;;третий байт - часы
+ADDR
+VALUE
 ENDC
 ;;******************* конец переменных ********************
 
@@ -248,21 +248,46 @@ TRANSMISSION_IN ;;ПРИЕМ ОТ DS1302
 	ANDLW		B'00000011'
 	MOVWF		NOW_HOUR10		;;<**** 10H
 
-;	MOVLW		DS_R_DAY
-;	MOVWF		RW_BYTE
-;	CALL		CONNECT_DS
-;	CALL		READ_BYTE
-;	MOVF		RW_BYTE1,0
-;	ANDLW		B'00001111'
-;	MOVWF		NOW_DAY			;; DAY
-;	
-;	RRF			RW_BYTE1
-;	RRF			RW_BYTE1
-;	RRF			RW_BYTE1
-;	RRF			RW_BYTE1
-;	MOVF		RW_BYTE1,0
-;	ANDLW		B'0000011'
-;	MOVWF		NOW_DAY10	;; 10DAY
+RETURN
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ЗАПИСЬ И ЧТЕНИЕ В EEPROM
+EEPROM_WRITE
+	BSF			STATUS,6
+	BSF			STATUS,5
+	BTFSC		EECON1,2
+	GOTO		$-1
+	BCF			STATUS,5
+	MOVF		ADDR,W
+	MOVWF		EEADR
+	MOVF		VALUE,W
+	MOVWF		EEDATA
+	BSF			STATUS,5
+	BCF			EECON1,7 ;;запись в EEPROM, 1 - FLASH
+	BSF			EECON1,2
+	;;BCF			INTCON,7 ЗАПРЕТ ПРЕРЫВАНИЙ
+	MOVLW		0x55
+	MOVWF		EECON2
+	MOVLW		0xAA
+	MOVWF		EECON2
+	BSF			EECON1,1
+	;;BSF			INTCON,7 РАЗРЕШИТЬ ПРЕРЫВАНИЯ
+	NOP
+	NOP
+	BCF			EECON1,2
+	CLRF		STATUS
+RETURN
+
+EEPROM_READ
+	BSF			STATUS,6
+	BCF			STATUS,5
+	MOVF		ADDR,W
+	MOVWF		EEADR
+	BSF			STATUS,5
+	BCF			EECON1,7		;;EEPROM=0, FLASH=1
+	BSF			EECON1,0
+	BCF			STATUS,5
+	MOVF		EEDATA,W
+	CLRF		STATUS
 RETURN
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 TRANSMISSION_OUT  ;;ПЕРЕДАЧА данных
@@ -521,8 +546,63 @@ SET_TIME_HOUR
 ;;	здесь должно быть TRANSMITION_OUT
 	MOVLW		.0
 	MOVWF		IBLINKING
-	CALL		TRANSMISSION_OUT
 RETURN
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;					ПРОЦЕДУРА УСТАНОВКИ РЕЖИМОВ							;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+SCHEDULE
+	MOVLW		.0
+	MOVWF		CURR_SKED
+	MOVLW		.10
+	MOVWF		IND2
+	MOVLW		.1	
+	MOVWF		IND4
+	CALL		BUTTON_SELECT_PROCESSING
+	CALL		SHOWING
+	BTFSS		PORTC,B_MODE
+	GOTO		$+.13
+	INCF		IND4,1
+;;	ОПЕРАЦИЯ СРАВНЕНИЯ: (если ind4==4)
+	MOVF		IND4,0
+	MOVWF		IND_TEMP
+	MOVLW		.4
+	SUBWF		IND_TEMP,1
+	DECFSZ		IND_TEMP 	;;ELSE:
+	GOTO		$+5	
+;; THEN:
+	MOVLW		.1
+	MOVWF		IND4
+	MOVLW		.0
+	MOVWF		CURR_SKED
+	CALL		BUTTON_MODE_PROCESSING
+
+	BTFSS		PORTC,B_SELECT
+	GOTO		$-.16
+	CALL		BUTTON_SELECT_PROCESSING
+
+	MOVF		CURR_SKED,W
+	MOVWF		ADDR
+	CALL		EEPROM_READ
+	MOVWF		NOW_MINUTE
+	INCF		ADDR,F
+	CALL		EEPROM_READ
+	MOVWF		NOW_MINUTE10
+	INCF		ADDR,F
+	CALL		EEPROM_READ
+	MOVWF		NOW_HOUR
+	INCF		ADDR,F
+	CALL		EEPROM_READ
+	MOVWF		NOW_HOUR10
+	INCF		ADDR,F
+	CALL		EEPROM_READ
+	CALL		SET_TIME
+;; ОТПРАВКА В EEPROM
+	MOVWF		VALUE
+	CALL		EEPROM_WRITE
+	INCF		ADDR,F	
+	RETURN		
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -537,21 +617,20 @@ RETURN
 ;;	|+				десятки минут
 ;;	|+				часы
 ;;	|+				десятки часов
-;;	|		режим
-;;	|			    1
+;;	|+		режим
+;;	|+			    1
 ;;	|					off/on		
 ;;  |					время включения				
 ;;	|						минуты
 ;;	|						десятки минут
 ;;	|						часы
 ;;	|						десятки часов
-;;	|					время выключения			
+;;	|					время работы			
 ;;	|						минуты
 ;;	|						десятки минут
-;;	|						часы
-;;	|						десятки часов
-;;	|				2	-=-
-;;	|				3	-=-
+;;	|						часы (до 5ч)
+;;	|+				2	-=-
+;;	|+				3	-=-
 ;;	|+		сброс
 ;;	|+				NO
 ;;	|+				YES
@@ -620,10 +699,11 @@ SHOWMENU_change_time
 	GOTO		$-5
 ;;
 	CALL		SET_TIME
+	CALL		TRANSMISSION_OUT
 	GOTO		SHOWMENU_before_transmit
 
 SHOWMENU_change_shedule
-	MOVLW		.19	
+	MOVLW		.19			;; "РЕ  "
 	MOVWF		IND1
 	MOVLW		.13	
 	MOVWF		IND2
@@ -635,8 +715,11 @@ SHOWMENU_change_shedule
 	CALL		BUTTON_MODE_PROCESSING
 	CALL		SHOWING
 	BTFSS		PORTC,B_MODE
-	GOTO		$-2
-	GOTO SHOWMENU_reset  ;;		дописать 
+	GOTO		$+2
+	GOTO SHOWMENU_reset 
+	BTFSS		PORTC,B_SELECT
+	GOTO		$-5
+	GOTO		SCHEDULE
 
 SHOWMENU_reset
 	MOVLW		.12	

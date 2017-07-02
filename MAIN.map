@@ -1,11 +1,11 @@
 MPLINK 4.37, Linker
-Linker Map File - Created Wed May 10 14:50:33 2017
+Linker Map File - Created Sat Jul 01 21:19:34 2017
 
                                  Section Info
                   Section       Type    Address   Location Size(Bytes)
                 ---------  ---------  ---------  ---------  ---------
                    .org_0       code   0x000000    program   0x000000
-                   .org_1       code   0x000000    program   0x0003f0
+                   .org_1       code   0x000000    program   0x000492
       .config_2007_MAIN.O       code   0x002007    program   0x000002
 
 
@@ -13,44 +13,47 @@ Linker Map File - Created Wed May 10 14:50:33 2017
                               Program Memory Usage 
                                Start         End      
                            ---------   ---------      
-                            0x000000    0x0001f7      
+                            0x000000    0x000248      
                             0x002007    0x002007      
-            505 out of 8453 program addresses used, program memory utilization is 5%
+            586 out of 8453 program addresses used, program memory utilization is 6%
 
 
 
                               Symbols - Sorted by Name
                      Name    Address   Location    Storage File                     
                 ---------  ---------  ---------  --------- ---------                
-   BUTTON_MODE_PROCESSING   0x000102    program     static C:\MKProjects\Timer-poliv\MAIN.asm
- BUTTON_SELECT_PROCESSING   0x00010a    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+   BUTTON_MODE_PROCESSING   0x000123    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+ BUTTON_SELECT_PROCESSING   0x00012b    program     static C:\MKProjects\Timer-poliv\MAIN.asm
                CHAR_TABLE   0x000026    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-               CONNECT_DS   0x0000b6    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-  CONNECT_DS_AFTER_SETBIT   0x0000c2    program     static C:\MKProjects\Timer-poliv\MAIN.asm
- CONNECT_DS_BEFORE_SETBIT   0x0000bb    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-CONNECT_DS_BEFORE_SETBIT1   0x0000c0    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+               CONNECT_DS   0x0000d7    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+  CONNECT_DS_AFTER_SETBIT   0x0000e3    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+ CONNECT_DS_BEFORE_SETBIT   0x0000dc    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+CONNECT_DS_BEFORE_SETBIT1   0x0000e1    program     static C:\MKProjects\Timer-poliv\MAIN.asm
                     DELAY   0x000041    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+              EEPROM_READ   0x0000a9    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+             EEPROM_WRITE   0x000093    program     static C:\MKProjects\Timer-poliv\MAIN.asm
                      MAIN   0x000011    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-                READ_BYTE   0x0000c9    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-              READ_BYTE_1   0x0000d0    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-          READ_BYTE_AFTER   0x0000d8    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-         READ_BYTE_BEFORE   0x0000d7    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-                 SET_TIME   0x000112    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-            SET_TIME_HOUR   0x000146    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-             SET_TIME_MIN   0x00011f    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-           SET_TIME_MIN10   0x000132    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+                READ_BYTE   0x0000ea    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+              READ_BYTE_1   0x0000f1    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+          READ_BYTE_AFTER   0x0000f9    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+         READ_BYTE_BEFORE   0x0000f8    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+                 SCHEDULE   0x00018d    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+                 SET_TIME   0x000133    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+            SET_TIME_HOUR   0x000167    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+             SET_TIME_MIN   0x000140    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+           SET_TIME_MIN10   0x000153    program     static C:\MKProjects\Timer-poliv\MAIN.asm
                   SHOWING   0x00004c    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-            SHOWING_DELAY   0x0000fc    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-SHOWING_DELAY_before_cycle1   0x0000fd    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-                 SHOWMENU   0x00016d    program     static C:\MKProjects\Timer-poliv\MAIN.asm
- SHOWMENU_before_transmit   0x00017d    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-  SHOWMENU_change_shedule   0x00019c    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-     SHOWMENU_change_time   0x00018b    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-  SHOWMENU_manual_control   0x0001e6    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-           SHOWMENU_reset   0x0001a9    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+            SHOWING_DELAY   0x00011d    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+SHOWING_DELAY_before_cycle1   0x00011e    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+                 SHOWMENU   0x0001ba    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+ SHOWMENU_before_transmit   0x0001ca    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+  SHOWMENU_change_shedule   0x0001ea    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+     SHOWMENU_change_time   0x0001d8    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+  SHOWMENU_manual_control   0x000237    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+           SHOWMENU_reset   0x0001fa    program     static C:\MKProjects\Timer-poliv\MAIN.asm
           TRANSMISSION_IN   0x000076    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-         TRANSMISSION_OUT   0x000093    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-               WRITE_BYTE   0x0000e1    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+         TRANSMISSION_OUT   0x0000b4    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+               WRITE_BYTE   0x000102    program     static C:\MKProjects\Timer-poliv\MAIN.asm
                  init_lbl   0x000000    program     static C:\MKProjects\Timer-poliv\MAIN.asm
 
 
@@ -64,29 +67,32 @@ SHOWING_DELAY_before_cycle1   0x0000fd    program     static C:\MKProjects\Timer
                     DELAY   0x000041    program     static C:\MKProjects\Timer-poliv\MAIN.asm
                   SHOWING   0x00004c    program     static C:\MKProjects\Timer-poliv\MAIN.asm
           TRANSMISSION_IN   0x000076    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-         TRANSMISSION_OUT   0x000093    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-               CONNECT_DS   0x0000b6    program     static C:\MKProjects\Timer-poliv\MAIN.asm
- CONNECT_DS_BEFORE_SETBIT   0x0000bb    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-CONNECT_DS_BEFORE_SETBIT1   0x0000c0    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-  CONNECT_DS_AFTER_SETBIT   0x0000c2    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-                READ_BYTE   0x0000c9    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-              READ_BYTE_1   0x0000d0    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-         READ_BYTE_BEFORE   0x0000d7    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-          READ_BYTE_AFTER   0x0000d8    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-               WRITE_BYTE   0x0000e1    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-            SHOWING_DELAY   0x0000fc    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-SHOWING_DELAY_before_cycle1   0x0000fd    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-   BUTTON_MODE_PROCESSING   0x000102    program     static C:\MKProjects\Timer-poliv\MAIN.asm
- BUTTON_SELECT_PROCESSING   0x00010a    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-                 SET_TIME   0x000112    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-             SET_TIME_MIN   0x00011f    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-           SET_TIME_MIN10   0x000132    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-            SET_TIME_HOUR   0x000146    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-                 SHOWMENU   0x00016d    program     static C:\MKProjects\Timer-poliv\MAIN.asm
- SHOWMENU_before_transmit   0x00017d    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-     SHOWMENU_change_time   0x00018b    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-  SHOWMENU_change_shedule   0x00019c    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-           SHOWMENU_reset   0x0001a9    program     static C:\MKProjects\Timer-poliv\MAIN.asm
-  SHOWMENU_manual_control   0x0001e6    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+             EEPROM_WRITE   0x000093    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+              EEPROM_READ   0x0000a9    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+         TRANSMISSION_OUT   0x0000b4    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+               CONNECT_DS   0x0000d7    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+ CONNECT_DS_BEFORE_SETBIT   0x0000dc    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+CONNECT_DS_BEFORE_SETBIT1   0x0000e1    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+  CONNECT_DS_AFTER_SETBIT   0x0000e3    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+                READ_BYTE   0x0000ea    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+              READ_BYTE_1   0x0000f1    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+         READ_BYTE_BEFORE   0x0000f8    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+          READ_BYTE_AFTER   0x0000f9    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+               WRITE_BYTE   0x000102    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+            SHOWING_DELAY   0x00011d    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+SHOWING_DELAY_before_cycle1   0x00011e    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+   BUTTON_MODE_PROCESSING   0x000123    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+ BUTTON_SELECT_PROCESSING   0x00012b    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+                 SET_TIME   0x000133    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+             SET_TIME_MIN   0x000140    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+           SET_TIME_MIN10   0x000153    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+            SET_TIME_HOUR   0x000167    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+                 SCHEDULE   0x00018d    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+                 SHOWMENU   0x0001ba    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+ SHOWMENU_before_transmit   0x0001ca    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+     SHOWMENU_change_time   0x0001d8    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+  SHOWMENU_change_shedule   0x0001ea    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+           SHOWMENU_reset   0x0001fa    program     static C:\MKProjects\Timer-poliv\MAIN.asm
+  SHOWMENU_manual_control   0x000237    program     static C:\MKProjects\Timer-poliv\MAIN.asm
 
 

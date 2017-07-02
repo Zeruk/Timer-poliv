@@ -26,40 +26,66 @@ Message[305] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 243 : Using default destination 
 Message[305] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 244 : Using default destination of 1 (file).
 Message[305] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 245 : Using default destination of 1 (file).
 Message[305] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 246 : Using default destination of 1 (file).
-Warning[203] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 266 : Found opcode in column 1. (RETURN)
-Warning[203] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 309 : Found opcode in column 1. (RETURN)
-Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 313 : Register in operand not in bank 0.  Ensure that bank bits are correct.
-Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 314 : Register in operand not in bank 0.  Ensure that bank bits are correct.
-Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 315 : Register in operand not in bank 0.  Ensure that bank bits are correct.
-Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 316 : Register in operand not in bank 0.  Ensure that bank bits are correct.
-Warning[207] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 317 : Found label after column 1. (CONNECT_DS_BEFORE_SETBIT)
-Warning[207] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 323 : Found label after column 1. (CONNECT_DS_BEFORE_SETBIT1)
-Warning[207] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 326 : Found label after column 1. (CONNECT_DS_AFTER_SETBIT)
-Warning[203] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 333 : Found opcode in column 1. (RETURN)
-Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 336 : Register in operand not in bank 0.  Ensure that bank bits are correct.
-Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 337 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Warning[203] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 251 : Found opcode in column 1. (RETURN)
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 255 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 256 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 257 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 259 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 261 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 263 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 264 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 265 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 266 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 269 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 271 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 272 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 276 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 277 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Warning[203] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 278 : Found opcode in column 1. (RETURN)
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 281 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 282 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 284 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 285 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 286 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 287 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 288 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 289 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 290 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Warning[203] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 291 : Found opcode in column 1. (RETURN)
+Warning[203] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 334 : Found opcode in column 1. (RETURN)
 Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 338 : Register in operand not in bank 0.  Ensure that bank bits are correct.
 Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 339 : Register in operand not in bank 0.  Ensure that bank bits are correct.
-Message[305] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 344 : Using default destination of 1 (file).
-Warning[203] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 363 : Found opcode in column 1. (RETURN)
-Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 366 : Register in operand not in bank 0.  Ensure that bank bits are correct.
-Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 367 : Register in operand not in bank 0.  Ensure that bank bits are correct.
-Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 368 : Register in operand not in bank 0.  Ensure that bank bits are correct.
-Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 369 : Register in operand not in bank 0.  Ensure that bank bits are correct.
-Message[305] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 375 : Using default destination of 1 (file).
-Message[305] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 387 : Using default destination of 1 (file).
-Warning[203] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 395 : Found opcode in column 1. (RETURN)
-Message[305] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 401 : Using default destination of 1 (file).
-Warning[203] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 404 : Found opcode in column 1. (RETURN)
-Warning[203] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 415 : Found opcode in column 1. (RETURN)
-Warning[203] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 424 : Found opcode in column 1. (RETURN)
-Message[305] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 451 : Using default destination of 1 (file).
-Message[305] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 460 : Using default destination of 1 (file).
-Message[305] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 472 : Using default destination of 1 (file).
-Message[305] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 493 : Using default destination of 1 (file).
-Message[305] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 502 : Using default destination of 1 (file).
-Message[305] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 508 : Using default destination of 1 (file).
-Warning[203] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 525 : Found opcode in column 1. (RETURN)
-Warning[207] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 589 : Found label after column 1. (SHOWMENU_before_transmit)
-Warning[203] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 732 : Found opcode in column 1. (GOTO)
-Warning[205] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 733 : Found directive in column 1. (end)
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 340 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 341 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Warning[207] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 342 : Found label after column 1. (CONNECT_DS_BEFORE_SETBIT)
+Warning[207] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 348 : Found label after column 1. (CONNECT_DS_BEFORE_SETBIT1)
+Warning[207] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 351 : Found label after column 1. (CONNECT_DS_AFTER_SETBIT)
+Warning[203] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 358 : Found opcode in column 1. (RETURN)
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 361 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 362 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 363 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 364 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[305] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 369 : Using default destination of 1 (file).
+Warning[203] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 388 : Found opcode in column 1. (RETURN)
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 391 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 392 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 393 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 394 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[305] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 400 : Using default destination of 1 (file).
+Message[305] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 412 : Using default destination of 1 (file).
+Warning[203] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 420 : Found opcode in column 1. (RETURN)
+Message[305] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 426 : Using default destination of 1 (file).
+Warning[203] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 429 : Found opcode in column 1. (RETURN)
+Warning[203] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 440 : Found opcode in column 1. (RETURN)
+Warning[203] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 449 : Found opcode in column 1. (RETURN)
+Message[305] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 476 : Using default destination of 1 (file).
+Message[305] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 485 : Using default destination of 1 (file).
+Message[305] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 497 : Using default destination of 1 (file).
+Message[305] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 518 : Using default destination of 1 (file).
+Message[305] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 527 : Using default destination of 1 (file).
+Message[305] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 533 : Using default destination of 1 (file).
+Warning[203] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 549 : Found opcode in column 1. (RETURN)
+Message[305] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 572 : Using default destination of 1 (file).
+Warning[207] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 668 : Found label after column 1. (SHOWMENU_before_transmit)
+Warning[203] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 815 : Found opcode in column 1. (GOTO)
+Warning[205] C:\MKPROJECTS\TIMER-POLIV\MAIN.ASM 816 : Found directive in column 1. (end)
